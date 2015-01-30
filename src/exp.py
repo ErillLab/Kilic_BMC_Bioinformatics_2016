@@ -7,6 +7,8 @@ import glob
 import transfer
 import motif
 import pickle
+import random
+from collections import Counter
 from utils import list as listutils
 from utils import bio as bioutils
 from Bio import pairwise2
@@ -116,6 +118,7 @@ def protein_distance(acca, accb):
 def run_transfer(method):
     df = read_motif_csv()
     pairs = find_pairs(df)
+    random.shuffle(pairs)
     rundir = os.path.join(RUNDIR, method)
     for i, ((tfa, pa, ga), (tfb, pb, gb)) in enumerate(pairs):
         print "Running %d of %d." % (i, len(pairs))
@@ -175,6 +178,8 @@ def post_process(method):
         reference_motif = transfer.get_true_motif(ref, config)
         target_motif = transfer.get_true_motif(target, config)
         inferred_motif = pickle.load(open(pkl))
+        if isinstance(inferred_motif, list):
+            inferred_motif = inferred_motif[0]
         df_dict['tf'][i] = tf
         df_dict['reference_tf_accession'][i] = protein_accessions[(ga, tf)]
         df_dict['target_tf_accession'][i] = protein_accessions[(gb, tf)]
@@ -194,4 +199,6 @@ def post_process(method):
         df_dict['target_inferred_dist'][i] \
             = motif.distance(target_motif, inferred_motif)
     df = pd.DataFrame(df_dict)
-    df.to_csv('../results_%s.csv' % method, index=False, cols=df_cols)
+    df.to_csv('../results/%s.csv' % method, index=False, cols=df_cols)
+
+    

@@ -163,9 +163,11 @@ def meme_on_pssm_searched(ref, target, config, seeded):
     nsites = int(2.15 * motif.size(true_motif))
     psites = motif.pssm_search_on_regions(true_motif, genome.promoters(target), nsites)
     regions = listutils.nub([sequence.expand(site) for site in psites])
+    for reg in regions:
+        print reg.start, reg.end, reg.strand
     motifs = [motif.new_motif(sites)
               for sites in meme.motif_discovery(regions, meme_settings)]
-    return motifs[0]
+    return motifs
 
 def network_transfer(ref, target, config, seeded):
     """Given reference regulon, identify the regulon that is orthologous to the
@@ -188,7 +190,7 @@ def network_transfer(ref, target, config, seeded):
         promoters.append(random.choice(genome.promoters(target)))
     motifs = [motif.new_motif(sites)
               for sites in meme.motif_discovery(promoters, meme_settings)]
-    return motifs[0]
+    return motifs
 
 def random_motif(ref, target, config):
     """Given reference motif M having k sites, generate k random subsequences

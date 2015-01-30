@@ -14,8 +14,6 @@ def run_meme(seqs, outdir, meme_settings):
     with open(infile.name, 'w') as f:
         f.write(seqs_to_fasta(seqs))
 
-    print seqs_to_fasta(seqs)
-
     # Call shell command
     cmd = [meme_settings['path'], infile.name, '-oc', outdir,
            '-dna',              # sequences use DNA alphabet

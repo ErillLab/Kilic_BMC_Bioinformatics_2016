@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 methods = ["direct_transfer",
            "meme_on_pssm_searched",
@@ -27,4 +28,16 @@ def method_plot(x, y):
         ax.set_title(methods[i])
         ax.set_xlabel(x)
         ax.set_ylabel(y)
+    plt.show(block=False)
+
+def inferred_motif_size():
+    method_plot("target_motif_size", "inferred_motif")
+
+def motifs_by_size():
+    df = pd.read_csv("../data/merged_data.tsv", sep='\t')
+    grps = df.groupby(['TF_accession', 'genome_accession', 'TF'])
+    motif_sizes = grps.size()
+    plt.hist(motif_sizes)
+    plt.show(block=False)
+
 
