@@ -46,9 +46,9 @@ def expand(seq):
     """Given a site (assuming in promoter region), expand it to entire promoter
     region"""
     proms = [prom for prom in genome.promoters(seq.genome)
-             if search(prom, seq.seq)]
-    assert proms
-    return random.choice(proms)
+             if prom.start <= seq.start and prom.end >= seq.end]
+    assert len(proms) == 1
+    return proms[0]
 
 def nearby_gene(seq):
     """Return nearby gene. When the sequence is a binding site, this
@@ -83,3 +83,23 @@ def search(seq, other_str):
             return new_seq(seq.genome, seq.start+rindex,
                            seq.start+rindex+len(other_str), -1)
     return None
+
+def merge_overlapping_seqs(seqs):
+    """Given a collection of sequences, merge ones that overlap and return the
+    merged list of sequences.
+    http://www.geeksforgeeks.org/merging-intervals/"""
+    # Make sure they are all from the same genome
+    seqs.sort(key=lambda s: s.start)
+    stack = [seqs[0]]
+    for i in xrange(1, len(seqs)):
+        top = stack[-1]
+        # If current interval is not overlapping with stack top, push it to stack
+        if top.end < seqs[i].start:
+            stack.append(seqs[i])
+        # Otherwise update the ending of the top
+        elif top.end < seqs[i].end:
+            top = genome.subseq(top.genome, top.start, seqs[i].end, top.strand)
+            stack.pop()
+            stack.append(top)
+    return stack
+            

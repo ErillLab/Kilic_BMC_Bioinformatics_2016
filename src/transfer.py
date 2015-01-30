@@ -162,7 +162,8 @@ def meme_on_pssm_searched(ref, target, config, seeded):
     true_motif = get_true_motif(ref, config)
     nsites = int(2.15 * motif.size(true_motif))
     psites = motif.pssm_search_on_regions(true_motif, genome.promoters(target), nsites)
-    regions = listutils.nub([sequence.expand(site) for site in psites])
+    regions = sequence.merge_overlapping_seqs(
+        [sequence.expand(site) for site in psites])
     for reg in regions:
         print reg.start, reg.end, reg.strand
     motifs = [motif.new_motif(sites)
@@ -183,11 +184,11 @@ def network_transfer(ref, target, config, seeded):
                                  for opr in true_regulon
                                  for g in opr
                                  if orthologs.get(g, None)])
-    promoters = listutils.nub([gene.upstream_region(target, opr[0])
-                               for opr in inf_regulon])
-    # If less than 3 promoters add random promoters to be able to run MEME.
-    while len(promoters) < 3:
-        promoters.append(random.choice(genome.promoters(target)))
+    promoters = sequence.merge_overlapping_seqs(
+        [gene.upstream_region(target, opr[0]) for opr in inf_regulon])
+    # If less than 3 promoters, search for motif in all promoters
+    if len(promoters) < 3:
+        promoters = genome.promoters(target)
     motifs = [motif.new_motif(sites)
               for sites in meme.motif_discovery(promoters, meme_settings)]
     return motifs

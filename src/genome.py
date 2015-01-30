@@ -72,7 +72,9 @@ def group_genes(gacc, genes, operon_dir):
 
 def promoters(genome):
     """Return the list of upstream regions of all genes."""
-    return [get_operon_upstream(genome, opr) for opr in genome.operons]
+    proms = sequence.merge_overlapping_seqs(
+        [get_operon_upstream(genome, opr) for opr in genome.operons])
+    return proms
 
 def get_operon_upstream(genome, operon):
     """Return the promoter region of the operon"""

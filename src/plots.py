@@ -12,7 +12,7 @@ methods = ["direct_transfer",
 def read_csv(method):
     return pd.read_csv("../results/%s.csv" % method)
 
-def protein_dist_vs_motif():
+def protein_vs_motif_dist():
     df = read_csv("direct_transfer")
     plt.plot(df['protein_distance'], df['reference_target_dist'], 'o',
                 alpha=0.5)
@@ -39,5 +39,4 @@ def motifs_by_size():
     motif_sizes = grps.size()
     plt.hist(motif_sizes)
     plt.show(block=False)
-
 

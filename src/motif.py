@@ -16,7 +16,6 @@ class Motif(namedtuple('Motif', 'sites motif_')):
         return '\n'.join([str(site) for site in self.sites])
 
 def new_motif(sites):
-
     """Given sites, return motif object"""
     sites = listutils.nub_by(sequence.overlap_test, sites)
     seqs = [site.seq for site in sites]
